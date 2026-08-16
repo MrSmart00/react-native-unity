@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["UnityEmbedModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.unityembed.UnityEmbedModule"]
+  }
+}

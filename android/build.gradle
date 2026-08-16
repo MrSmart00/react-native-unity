@@ -1,0 +1,50 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'expo.modules.unityembed'
+version = '0.1.0'
+
+// The exported Unity module. this package's config plugin adds it to
+// settings.gradle; `npx react-native-unity-export` puts it on disk.
+def unityLibrary = findProject(':unityLibrary')
+if (unityLibrary == null) {
+  throw new GradleException("""
+    [react-native-unity] :unityLibrary is not in settings.gradle.
+
+    From your app directory, run in this order:
+      npx react-native-unity-export android
+      npx expo prebuild --clean
+
+    The export writes the module to disk; prebuild is what adds it to
+    settings.gradle. Doing them the other way round leaves this project
+    depending on something that is not there yet.
+  """.stripIndent())
+}
+
+android {
+  namespace "expo.modules.unityembed"
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+    consumerProguardFiles 'consumer-rules.pro'
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  // Brings the engine's .so files and assets into the app.
+  implementation project(':unityLibrary')
+
+  // ⚠️ `com.unity3d.player.*` is NOT on the compile classpath just because we
+  // depend on :unityLibrary — that module consumes the jar with
+  // `implementation fileTree(dir: 'libs')`, which does not expose it to
+  // consumers. So point at the jar directly.
+  //
+  // compileOnly, not implementation: :unityLibrary already ships the same jar at
+  // runtime, and packaging a second copy is how duplicate-class errors start.
+  compileOnly files("${unityLibrary.projectDir}/libs/unity-classes.jar")
+}

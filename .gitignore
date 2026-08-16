@@ -1,0 +1,16 @@
+node_modules/
+*.log
+.DS_Store
+
+# Staged by `react-native-unity-export ios`: the consuming app's Unity build,
+# copied here because CocoaPods resolves `vendored_frameworks` against the pod
+# root and will not follow a path outside it. Hundreds of MB, and specific to
+# whichever app last ran the export.
+ios/vendor/
+
+# Gradle output for the Android module.
+android/build/
+android/.cxx/
+
+# npm pack output
+*.tgz

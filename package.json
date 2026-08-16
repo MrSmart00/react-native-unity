@@ -1,0 +1,51 @@
+{
+  "name": "@mrsmart00/react-native-unity",
+  "version": "0.1.0",
+  "description": "Hosts a Unity as a Library player inside a React Native (Expo) app",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src",
+    "plugin",
+    "unity",
+    "bin",
+    "app.plugin.js",
+    "expo-module.config.json",
+    "LICENSE",
+    "README.md",
+    "ios",
+    "!ios/vendor",
+    "android",
+    "!android/build",
+    "!android/.cxx"
+  ],
+  "bin": {
+    "react-native-unity-export": "bin/export-unity.sh"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "expo-module",
+    "unity",
+    "unity-as-a-library",
+    "uaal",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrSmart00/react-native-unity.git"
+  },
+  "bugs": "https://github.com/MrSmart00/react-native-unity/issues",
+  "homepage": "https://github.com/MrSmart00/react-native-unity#readme",
+  "author": "MrSmart00",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}
