@@ -300,9 +300,19 @@ PY
   # naming Unity — an unhelpful place to learn your engine is too old.
   #
   # Checked with unzip rather than javap so this works without a JDK on PATH.
+  #
+  # ⚠️ The listing is captured first rather than piped straight into grep.
+  #
+  # `unzip -l … | grep -q …` looks equivalent and is not: grep exits the moment
+  # it matches, unzip dies of SIGPIPE, and `set -o pipefail` then reports the
+  # pipeline as failed. Negate that and the check fires exactly when the class
+  # *is* present — the opposite of what it is for.
   local classes_jar="$OUT/android/unityLibrary/libs/unity-classes.jar"
-  if [[ -f "$classes_jar" ]] && ! unzip -l "$classes_jar" 2>/dev/null \
-      | grep -q 'UnityPlayerForActivityOrService\.class'; then
+  local jar_listing=""
+  [[ -f "$classes_jar" ]] && jar_listing="$(unzip -l "$classes_jar" 2>/dev/null || true)"
+
+  if [[ -n "$jar_listing" ]] \
+      && ! grep -q 'UnityPlayerForActivityOrService\.class' <<<"$jar_listing"; then
     echo >&2
     echo "  ✗ This Unity does not provide UnityPlayerForActivityOrService." >&2
     echo "    @mrsmart00/react-native-unity requires Unity 6 or newer; it compiles" >&2
