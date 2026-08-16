@@ -300,7 +300,7 @@ PY
   # naming Unity — an unhelpful place to learn your engine is too old.
   #
   # Checked with unzip rather than javap so this works without a JDK on PATH.
-  local classes_jar="$ANDROID_OUT/unityLibrary/libs/unity-classes.jar"
+  local classes_jar="$OUT/android/unityLibrary/libs/unity-classes.jar"
   if [[ -f "$classes_jar" ]] && ! unzip -l "$classes_jar" 2>/dev/null \
       | grep -q 'UnityPlayerForActivityOrService\.class'; then
     echo >&2

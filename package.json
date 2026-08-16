@@ -1,6 +1,6 @@
 {
   "name": "@mrsmart00/react-native-unity",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Hosts a Unity as a Library player inside a React Native (Expo) app",
   "main": "src/index.ts",
   "types": "src/index.ts",
