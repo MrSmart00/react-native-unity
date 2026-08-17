@@ -50,6 +50,10 @@ These are properties of embedding Unity, not gaps to be filled later.
 Treat 0.x as exactly that. Reports from other Unity versions and real hardware
 are the most useful thing you can contribute.
 
+**Known issue:** on Android, IMGUI has no default skin — see
+[IMGUI has no default skin on Android](#imgui-ongui-has-no-default-skin-on-android).
+Rendering through a Canvas is unaffected.
+
 Unity **6 or newer is required**: the Android sources compile directly against
 `UnityPlayerForActivityOrService` rather than reaching it by reflection. The
 export command checks for it and fails with a clear message on older engines.
@@ -250,12 +254,42 @@ app project, the Podfile, and this podspec — because CocoaPods regenerates
 active architecture, so this class of failure **cannot appear there**. Verify in
 Release.
 
-### Unity's managed stripping
+### IMGUI (`OnGUI`) has no default skin on Android
 
-Raising `ManagedStrippingLevel` can break **Android while iOS stays fine on the
-same settings** — Unity's built-in GUISkin is reached through resources, which
-the stripper cannot see. If you raise it, weigh binary size against runtime
-failure and re-test both platforms.
+In an embedded player on Android, `GUI.skin` comes back null. The engine itself
+throws before any of your code runs:
+
+```
+NullReferenceException
+  at UnityEngine.GUI.DoSetSkin (UnityEngine.GUISkin newSkin)
+  at UnityEngine.GUIUtility.ResetGlobalState ()
+```
+
+Anything deriving a style from it — `new GUIStyle(GUI.skin.label)` is the usual
+shape — then throws too, every frame, and nothing draws. **iOS is unaffected.**
+
+Drawing works if you never touch `GUI.skin`:
+
+```csharp
+// Throws on Android
+_style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
+
+// Draws
+_style = new GUIStyle { alignment = TextAnchor.MiddleCenter };
+_style.normal.textColor = Color.white;
+```
+
+**This is a workaround, not a fix.** The engine-level exception keeps firing
+every frame even once your own code stops throwing, so the log fills up. If you
+need text on screen for more than a placeholder, use a Canvas or TextMesh rather
+than IMGUI.
+
+> **What this is not:** managed stripping. It reproduces at
+> `ManagedStrippingLevel.Low`, and `unity default resources` is present in the
+> exported `assets/bin/Data/Resources/` and in the built APK. The root cause is
+> not established — plausibly IMGUI initialisation assuming a startup path that
+> embedding does not take, but that is untested. If you find out, please open an
+> issue.
 
 ---
 
